@@ -20,11 +20,12 @@
         }
 
         function isItemContainsSearchTerm(dictionaryItem) {
-            if (dictionaryItem.Key.indexOf($scope.searchForm.searchTerm) !== -1) return true;
+            var lowercaseSearchTerm = $scope.searchForm.searchTerm.toLowerCase();
+            if (dictionaryItem.Key.toLowerCase().indexOf(lowercaseSearchTerm) !== -1) return true;
 
             for (var property in  dictionaryItem.Values) {
                 if (dictionaryItem.Values.hasOwnProperty(property) &&
-                    dictionaryItem.Values[property].indexOf($scope.searchForm.searchTerm) !== -1) return true;
+                    dictionaryItem.Values[property].toLowerCase().indexOf(lowercaseSearchTerm) !== -1) return true;
             }
 
             return false;
