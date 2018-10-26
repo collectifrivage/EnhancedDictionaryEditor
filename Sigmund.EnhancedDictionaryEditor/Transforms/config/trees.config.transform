@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<trees>
+  <add initialize="true" sortOrder="0" alias="EnhancedDictionaryEditorSectionTree" application="enhancedDictionaryEditor" title="Dictionnary" iconClosed="icon-font" iconOpen="icon-font" type="EnhancedDictionaryEditor.EnhancedDictionaryEditorController, Sigmund.EnhancedDictionaryEditor" />
+</trees>

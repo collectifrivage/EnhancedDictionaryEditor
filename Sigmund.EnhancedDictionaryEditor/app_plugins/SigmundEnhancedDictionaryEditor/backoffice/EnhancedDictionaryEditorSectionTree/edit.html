@@ -1,0 +1,43 @@
+﻿<div ng-controller="Sigmund.EnhancedDictionaryEditorEditController">
+    <div style="height: 25px;" ng-if="loading">
+        <umb-load-indicator></umb-load-indicator>
+    </div>
+
+    <ng-form name="dictionaryItemForm" val-form-manager>
+        <umb-panel ng-if="!loading">
+            <umb-editor-view>
+                <umb-editor-header ng-if="isNew"
+                                   hide-icon="true"
+                                   hide-description="true"
+                                   name="dictionaryItem.Key"
+                                   hide-alias="true">
+                </umb-editor-header>
+                <umb-editor-header ng-if="!isNew"
+                                   hide-icon="true"
+                                   hide-description="true"
+                                   alias="dictionaryItem.Key"
+                                   name="dictionaryItem.Key"
+                                   name-locked="true">
+                </umb-editor-header>
+                <umb-editor-container class="umb-panel-body umb-scrollable row-fluid">
+                    <div class="tab-content form-horizontal" style="padding-bottom: 90px">
+                        <umb-control-group ng-repeat="culture in cultures" label="{{culture.DisplayName}}" description="{{culture.Name}}">
+                            <textarea class="umb-editor textstring" ng-model="dictionaryItem.Values[culture.Name]"></textarea>
+                        </umb-control-group>
+                    </div>
+                </umb-editor-container>
+                <umb-editor-footer>
+                    <umb-editor-footer-content-right>
+                        <umb-tab-buttons>
+                            <div class="btn-group">
+                                <button ng-click="save(person)" type="submit" data-hotkey="ctrl+s" class="btn btn-success">
+                                    <localize key="buttons_save">Save</localize>
+                                </button>
+                            </div>
+                        </umb-tab-buttons>
+                    </umb-editor-footer-content-right>
+                </umb-editor-footer>
+            </umb-editor-view>
+        </umb-panel>
+    </ng-form>
+</div>

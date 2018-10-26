@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<dashBoard>
+  <section alias="EnhancedDictionaryEditor">
+    <areas>
+      <area>enhancedDictionaryEditor</area>
+    </areas>
+    <tab caption="General view">
+      <control panelCaption="">../App_Plugins/SigmundEnhancedDictionaryEditor/general_view_tab.html</control>
+    </tab>
+  </section>
+</dashBoard>

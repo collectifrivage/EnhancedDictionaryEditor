@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<language alias="fr" intName="French (France)" localName="French (France)" lcid="" culture="fr-FR">
+  <area alias="sections">
+    <key alias="enhancedDictionaryEditor">Éditeur de dictionnaire</key>
+  </area>
+</language>

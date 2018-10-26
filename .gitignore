@@ -1,0 +1,14 @@
+.vs
+app_data
+bin
+obj
+node_modules
+/packages
+*.user
+*.suo
+*.orig
+*/bin/Debug/
+*/bin/Release/
+*/bin/
+*/App_Data/Logs/
+*/App_Data/TEMP/

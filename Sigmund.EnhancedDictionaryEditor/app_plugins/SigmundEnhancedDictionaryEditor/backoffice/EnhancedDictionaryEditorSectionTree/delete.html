@@ -1,0 +1,8 @@
+﻿<div class="umb-dialog umb-pane" ng-controller="Sigmund.EnhancedDictionaryEditorDeleteController">
+    <div class="umb-dialog-body" auto-scale="90">
+        <p class="umb-abstract">
+            <localize key="defaultdialogs_confirmdelete"></localize> <strong>{{currentNode.metaData.key}}</strong> ?
+        </p>
+        <umb-confirm ng-if="!loading" on-confirm="deleteItem" on-cancel="cancel"></umb-confirm>
+    </div>
+</div>

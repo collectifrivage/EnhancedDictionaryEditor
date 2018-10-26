@@ -1,0 +1,39 @@
+﻿<div ng-controller="Sigmund.EnhancedDictionaryEditorGeneralViewTabController">
+    <div>
+        <form class="form-search" novalidate="">
+            <i class="icon-search"></i>
+            <input type="text"
+                   id="dictionary-items-search-field"
+                   ng-model="searchForm.searchTerm"
+                   class="umb-search-field search-query search-input"
+                   placeholder="Type to search..."
+                   ng-keydown="search()"
+                   no-dirty-check="">
+        </form>
+        <div style="height: 25px;" ng-if="loading">
+            <umb-load-indicator></umb-load-indicator>
+        </div>
+        <table ng-if="!loading" id="dictionaryItems" style="width: 100%;">
+            <thead>
+                <tr>
+                    <td>Clé</td>
+                    <td ng-repeat="culture in cultures">{{culture.Name}}</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="key in displayedDictionnaryKeys">
+                    <th style="padding-left: 0px;">
+                        <a ng-click="editItem(key)">{{key.Key}}</a>
+                    </th>
+
+                    <td ng-repeat="culture in cultures">
+                        <i ng-if="!key.Values[culture.Name]" class="icon-alert"></i>
+                        <i ng-if="key.Values[culture.Name]" class="icon-check"></i>
+                        <span>{{key.Values[culture.Name].substring(0, 10)}}<span ng-if="key.Values[culture.Name].length > 10">...</span></span>
+                    </td>
+                </tr>
+        </table>
+    </div>
+</div>
+
+

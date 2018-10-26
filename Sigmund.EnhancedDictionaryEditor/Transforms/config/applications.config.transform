@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<applications>
+  <add alias="enhancedDictionaryEditor" name="Dictionary" icon="icon-font" sortOrder="8" />
+</applications>
