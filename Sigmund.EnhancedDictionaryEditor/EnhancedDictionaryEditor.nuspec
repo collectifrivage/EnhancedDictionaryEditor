@@ -13,8 +13,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="app_plugins\EnhancedDictionaryEditor\**\*.*" target="content\app_plugins\EnhancedDictionaryEditor" />
+    <file src="app_plugins\SigmundEnhancedDictionaryEditor\**\*.*" target="content\app_plugins\SigmundEnhancedDictionaryEditor" />
     <file src="Transforms\**\*.*" target="content" />
-    <file src="bin\Sigmund.EnhancedDictionaryEditor.dll" target="bin\Sigmund.EnhancedDictionaryEditor.dll" />
+    <file src="bin\Sigmund.EnhancedDictionaryEditor.dll" target="lib\net45" />
 </files>
 </package>
