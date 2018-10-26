@@ -3,8 +3,10 @@
   <metadata>
     <id>EnhancedDictionaryEditor</id>
     <version>1.0.0</version>
-    <authors>Sigmund</authors>
-    <owners>Sigmund</owners>
+    <authors>Sigmund,Davidton</authors>
+    <owners>Sigmund,Davidton</owners>
+    <projectUrl>https://github.com/sigmundftw/EnhancedDictionaryEditor</projectUrl>
+    <language>en-ca</language>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Dictionary key editor</description>
     <tags>Dictionary, Editor, Key</tags>
