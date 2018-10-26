@@ -38,7 +38,7 @@
             $scope.searchForm = { searchTerm: "" };
 
             $q.all([
-                sigmundDictionaryEditorApiService.GetAll(),
+                sigmundDictionaryEditorApiService.getAll(),
                 sigmundDictionaryEditorApiService.getCultures()
             ]).then(function (result) {
                 var dictionaryItems = result[0].data;

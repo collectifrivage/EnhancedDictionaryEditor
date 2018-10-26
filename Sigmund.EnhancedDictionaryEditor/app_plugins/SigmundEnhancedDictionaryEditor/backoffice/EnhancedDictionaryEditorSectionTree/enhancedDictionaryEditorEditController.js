@@ -40,7 +40,7 @@
             $scope.isNew = false;
 
             $q.all([
-                sigmundDictionaryEditorApiService.GetDictionaryItemById($routeParams.id), 
+                sigmundDictionaryEditorApiService.getDictionaryItemById($routeParams.id), 
                 sigmundDictionaryEditorApiService.getCultures()
             ]).then(function (result) {
                 var dictionaryItem = result[0].data;
