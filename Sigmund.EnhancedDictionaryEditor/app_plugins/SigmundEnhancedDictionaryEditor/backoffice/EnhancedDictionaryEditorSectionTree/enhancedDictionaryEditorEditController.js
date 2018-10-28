@@ -1,6 +1,6 @@
 ﻿angular.module("umbraco")
     .controller("Sigmund.EnhancedDictionaryEditorEditController",
-    function ($scope, sigmundDictionaryEditorApiService, $q, navigationService, $routeParams, contentEditingHelper, notificationsService) {
+    function ($scope, sigmundDictionaryEditorApiService, $q, $location, navigationService, $routeParams, contentEditingHelper, notificationsService) {
 
         var defaultDictionaryItemKey = "";
         init();
