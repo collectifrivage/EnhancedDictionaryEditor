@@ -2,14 +2,16 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>EnhancedDictionaryEditor</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Sigmund,Davidton</authors>
     <owners>Sigmund,Davidton</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/sigmundftw/EnhancedDictionaryEditor</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/sigmundftw/EnhancedDictionaryEditor/master/Logo.png</iconUrl>
     <language>en-ca</language>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Dictionary key editor</description>
-    <tags>Dictionary, Editor, Key</tags>
+    <tags>dictionary editor Key umbraco enhanced backoffice</tags>
     <dependencies>
       <dependency id="UmbracoCms.Core" version="7.7.6" />
     </dependencies>
