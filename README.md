@@ -1,6 +1,6 @@
 # Éditeur de clé de dictionaire rehaussé Sigmund
 
-[![Build status](https://sigmundftw.visualstudio.com/Sigmund%20Nuget%20Packages/_apis/build/status/Sigmund%20Nuget%20Packages-ASP.NET-CI)](https://sigmundftw.visualstudio.com/Sigmund%20Nuget%20Packages/_build/latest?definitionId=74)
+[![Build status](https://sigmundftw.visualstudio.com/EnhancedDictionaryEditor/_apis/build/status/EnhancedDictionaryEditor%20Build%20pipeline)](https://sigmundftw.visualstudio.com/EnhancedDictionaryEditor/_build/latest?definitionId=78)
 
 Permet de 
 - Voir la liste des clés
