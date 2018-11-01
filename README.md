@@ -9,6 +9,12 @@ Permet de
 - Supprimer des clés
 - Rechercher par identifiant ou par valeur des clés
 
+## Pour installer dans votre projet Umbraco
+
+```
+Install-Package EnhancedDictionaryEditor
+```
+
 ## Installation développeur
 
 - Clonez le repository
