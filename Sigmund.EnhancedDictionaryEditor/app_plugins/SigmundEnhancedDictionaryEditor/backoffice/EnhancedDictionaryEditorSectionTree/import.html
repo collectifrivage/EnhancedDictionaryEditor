@@ -1,0 +1,23 @@
+﻿<div class="umb-dialog umb-pane" ng-controller="Sigmund.EnhancedDictionaryEditorImportController">
+    <div class="umb-dialog-body" auto-scale="90">
+        <h1>Import</h1>
+        <p class="umb-abstract">
+            Import a previously generated xml file using the export feature to update existing keys and create missing ones.
+        </p>
+        <div>
+            <div class="file-uploader">
+                <umb-single-file-upload></umb-single-file-upload>
+            </div>
+            <button type="submit" ng-disabled="importButtonDisabled" ng-click="importXml()" class="btn btn-primary">
+                Import
+            </button>
+        </div>
+        <umb-load-indicator ng-if="loading"></umb-load-indicator>
+    </div>
+</div>
+
+
+
+
+
+

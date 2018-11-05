@@ -1,0 +1,10 @@
+﻿<div class="umb-dialog umb-pane" ng-controller="Sigmund.EnhancedDictionaryEditorExportController">
+    <div class="umb-dialog-body" auto-scale="90">
+        <h1>Export</h1>
+        <p class="umb-abstract">
+            Here you can export all your dictionary keys and import them later to the desired environment.
+        </p>
+        <a class="btn btn-primary" ng-if="!loading" ng-click="exportItems()">Export</a>
+        <umb-load-indicator ng-if="loading"></umb-load-indicator>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 ﻿using Umbraco.Web.Models.Trees;
 
-namespace Sigmund.EnhancedDictionaryEditor.Model
+namespace Sigmund.EnhancedDictionaryEditor.Model.MenuAction
 {
     public class CreateDictionaryItem : MenuItem
     {
@@ -10,7 +10,6 @@ namespace Sigmund.EnhancedDictionaryEditor.Model
         {
             Icon = "add";
             NavigateToRoute($"{EditTreeItemPath}?parent={parentId}");
-
         }
     }
 }

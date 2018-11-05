@@ -11,8 +11,19 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Web;
 using Umbraco.Web.Models.Trees;
+using Sigmund.EnhancedDictionaryEditor.Model.MenuAction;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;
+using EnhancedDictionaryEditor.Model.Serialization;
+using System.Xml.Serialization;
+using System.IO;
+using System.Text;
+using System.Xml;
+using System.Net.Http;
+using Sigmund.EnhancedDictionaryEditor.Model.Serialization;
+using System.Web.Http;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace EnhancedDictionaryEditor
 {
@@ -24,6 +35,7 @@ namespace EnhancedDictionaryEditor
         private ILocalizationService LocalizationService => UmbracoContext.Current.Application.Services.LocalizationService;
         private IUserService UserService => UmbracoContext.Current.Application.Services.UserService;
         private int CurrentUserId => UserService.GetByUsername(HttpContext.Current.User.Identity.Name).Id;
+        private const string RootNodeId = "-1";
 
         public EnhancedDictionaryEditorController()
         {
@@ -64,21 +76,82 @@ namespace EnhancedDictionaryEditor
             }
         }
 
+        [HttpPost]
+        public async Task<HttpResponseMessage> ImportXml()
+        {
+            SerializableDictionaryItemsArray deserializedXml;
+            string xml = await Request.Content.ReadAsStringAsync();
+
+            XmlSerializer serializer = new XmlSerializer(typeof(SerializableDictionaryItemsArray));
+            using (var stream = new StringReader(xml))
+            {
+                deserializedXml = serializer.Deserialize(stream) as SerializableDictionaryItemsArray;
+            }
+            var allItems = deserializedXml.DictionaryItems.Select(x => new ItemInfos(x)).ToList();
+            var rootItems = allItems.Where(x => x.ParentId == null || !x.ParentId.HasValue).ToList();
+            
+            foreach (var dictionaryItem in rootItems)
+            {
+                ImportItemWithChilds(dictionaryItem, allItems);
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+        
+        [HttpGet]
+        public HttpResponseMessage ExportXml()
+        {
+            var dictionaryKeys = new SerializableDictionaryItemsArray() {
+                DictionaryItems = GetAll().Select(x => new SerializableDictionaryItem(x)).ToArray()
+            };
+
+            XmlSerializer serializer = new XmlSerializer(dictionaryKeys.GetType());
+            var xmlSettings = new XmlWriterSettings()
+            {
+                Encoding = new UTF8Encoding(false),
+                Indent = true,
+                NewLineOnAttributes = false,
+            };
+
+            using (var ms = new MemoryStream())
+            using (var xw = XmlWriter.Create(ms, xmlSettings))
+            {
+                serializer.Serialize(xw, dictionaryKeys);
+                var encodedXml = Encoding.UTF8.GetString(ms.ToArray());
+
+                return new HttpResponseMessage() { Content = new StringContent(encodedXml, Encoding.UTF8, "application/xml") };
+            }
+        }
+
         public void Save(ItemInfos dictionaryItem)
         {
-            IDictionaryItem item;
-            if (dictionaryItem.IsNew)
+            var item = dictionaryItem.IsNew ? null : LocalizationService.GetDictionaryItemById(dictionaryItem.Id.Value);
+            var isNew = false;
+
+            if (item == null)
             {
+                isNew = true;
                 item = new DictionaryItem(dictionaryItem.ParentId, dictionaryItem.Key);
+
+                //to be assured that the new item will have the same id as the imported one.
+                if (dictionaryItem.Id != null && dictionaryItem.Id.HasValue)
+                {
+                    item.Key = dictionaryItem.Id.Value;
+                }
             } else
             {
-                item = LocalizationService.GetDictionaryItemById(dictionaryItem.Id.Value);
                 item.ItemKey = dictionaryItem.Key;
                 if (dictionaryItem.ParentId != null) item.ParentId = dictionaryItem.ParentId;
             }
             
             UpdateLanguages(item, dictionaryItem.Values);
             LocalizationService.Save(item, CurrentUserId);
+
+            if (isNew)
+            {
+                //update saved item to have the newly created dictionary item Id.
+                dictionaryItem.Id = item.Key;
+            }
         }
 
         /// <summary>
@@ -113,7 +186,20 @@ namespace EnhancedDictionaryEditor
         {
             var menuItems = new MenuItemCollection();
             menuItems.Items.Add(new CreateDictionaryItem(id));
-            if (id != "-1") menuItems.Items.Add<ActionDelete>("Delete");
+            if (id == RootNodeId)
+            {
+                var importMenuItem = new ImportDictionaryItems
+                {
+                    SeperatorBefore = true
+                };
+
+                menuItems.Items.Add(importMenuItem);
+                menuItems.Items.Add(new ExportDictionaryItems());
+            }
+            else
+            {
+                menuItems.Items.Add<ActionDelete>("Delete");
+            }
 
             return menuItems;
         }
@@ -128,6 +214,22 @@ namespace EnhancedDictionaryEditor
                 if (language == null) continue;
 
                 LocalizationService.AddOrUpdateDictionaryValue(item, language, value.Value);
+            }
+        }
+
+        private void ImportItemWithChilds(ItemInfos importedDictionaryItem, List<ItemInfos> itemsToImport)
+        {
+            var childrens = itemsToImport.Where(x => x.ParentId == importedDictionaryItem.Id).ToList();
+            Save(importedDictionaryItem);
+
+            foreach (var child in childrens)
+            {
+                child.ParentId = importedDictionaryItem.Id;
+            }
+
+            foreach (var child in childrens)
+            {
+                ImportItemWithChilds(child, itemsToImport);
             }
         }
     }

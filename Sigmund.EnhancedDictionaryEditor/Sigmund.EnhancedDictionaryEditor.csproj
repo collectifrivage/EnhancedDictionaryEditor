@@ -240,6 +240,10 @@
     <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\edit.html" />
     <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\enhancedDictionaryEditorDeleteController.js" />
     <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\enhancedDictionaryEditorEditController.js" />
+    <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\enhancedDictionaryEditorexportController.js" />
+    <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\enhancedDictionaryEditorImportController.js" />
+    <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\export.html" />
+    <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\backoffice\EnhancedDictionaryEditorSectionTree\import.html" />
     <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\generalViewTabController.js" />
     <Content Include="app_plugins\SigmundEnhancedDictionaryEditor\general_view_tab.html" />
     <Content Include="EnhancedDictionaryEditor.nuspec">
@@ -266,10 +270,14 @@
   <ItemGroup>
     <Compile Include="BackOffice\SigmundEnhancedDictionaryEditor\DictionnaryKeyTreeNodeRepository.cs" />
     <Compile Include="BackOffice\SigmundEnhancedDictionaryEditor\EnhancedDictionaryEditorController.cs" />
-    <Compile Include="Model\CreateDictionaryItem.cs" />
     <Compile Include="Model\ItemCulture.cs" />
     <Compile Include="Model\ItemInfos.cs" />
-    <Compile Include="Model\SaveData.cs" />
+    <Compile Include="Model\MenuAction\CreateDictionaryItem.cs" />
+    <Compile Include="Model\MenuAction\ExportDictionaryItems.cs" />
+    <Compile Include="Model\MenuAction\ImportDictionaryItems.cs" />
+    <Compile Include="Model\Serialization\SerializableDictionaryItem.cs" />
+    <Compile Include="Model\Serialization\SerializableDictionaryItemsArray.cs" />
+    <Compile Include="Model\Serialization\SerializableItemInfosTranslation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <PropertyGroup>
