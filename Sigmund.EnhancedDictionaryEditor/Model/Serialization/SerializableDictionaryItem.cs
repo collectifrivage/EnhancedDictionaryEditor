@@ -8,7 +8,7 @@ namespace EnhancedDictionaryEditor.Model.Serialization
     [Serializable]
     public class SerializableDictionaryItem
     {
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Key { get; set; }
 
@@ -18,8 +18,6 @@ namespace EnhancedDictionaryEditor.Model.Serialization
 
         public Guid? ParentId { get; set; }
 
-        public bool IsNew => Id == null;
-
         public SerializableDictionaryItem()
         {
             
@@ -27,7 +25,7 @@ namespace EnhancedDictionaryEditor.Model.Serialization
 
         public SerializableDictionaryItem(ItemInfos item)
         {
-            Id = item.Id;
+            Id = item.Id ?? Guid.NewGuid();
             Key = item.Key;
             Translations = item.Values.Select(x => new SerializableItemInfosTranslation(x.Key, x.Value)).ToArray();
             ParentId = item.ParentId;
