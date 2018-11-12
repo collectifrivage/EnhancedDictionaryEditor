@@ -66,10 +66,22 @@ namespace EnhancedDictionaryEditor
             string xml = await Request.Content.ReadAsStringAsync();
 
             XmlSerializer serializer = new XmlSerializer(typeof(SerializableDictionaryItemsArray));
+            
             using (var stream = new StringReader(xml))
             {
-                deserializedXml = serializer.Deserialize(stream) as SerializableDictionaryItemsArray;
+                try
+                {
+                    deserializedXml = serializer.Deserialize(stream) as SerializableDictionaryItemsArray;
+                }
+                catch (InvalidOperationException e)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                    {
+                        ReasonPhrase = e.Message
+                    };
+                }
             }
+            
             var allItems = deserializedXml.DictionaryItems.Select(x => new ItemInfos(x)).ToList();
             var rootItems = allItems.Where(x => x.ParentId == null || !x.ParentId.HasValue).ToList();
             
