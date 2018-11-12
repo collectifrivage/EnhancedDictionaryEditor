@@ -1,29 +1,27 @@
 ﻿using EnhancedDictionaryEditor.Model;
-using Sigmund.EnhancedDictionaryEditor.BackOffice.SigmundEnhancedDictionaryEditor;
+using EnhancedDictionaryEditor.Model.Serialization;
 using Sigmund.EnhancedDictionaryEditor.Model;
+using Sigmund.EnhancedDictionaryEditor.Model.MenuAction;
+using Sigmund.EnhancedDictionaryEditor.Model.Serialization;
+using Sigmund.EnhancedDictionaryEditor.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Xml;
+using System.Xml.Serialization;
 using umbraco.BusinessLogic.Actions;
-using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Web;
 using Umbraco.Web.Models.Trees;
-using Sigmund.EnhancedDictionaryEditor.Model.MenuAction;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;
-using EnhancedDictionaryEditor.Model.Serialization;
-using System.Xml.Serialization;
-using System.IO;
-using System.Text;
-using System.Xml;
-using System.Net.Http;
-using Sigmund.EnhancedDictionaryEditor.Model.Serialization;
-using System.Web.Http;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace EnhancedDictionaryEditor
 {
@@ -32,14 +30,14 @@ namespace EnhancedDictionaryEditor
     public class EnhancedDictionaryEditorController : TreeController
     {
         private DictionnaryKeyTreeNodeRepository TreeNodeRepository;
-        private ILocalizationService LocalizationService => UmbracoContext.Current.Application.Services.LocalizationService;
-        private IUserService UserService => UmbracoContext.Current.Application.Services.UserService;
-        private int CurrentUserId => UserService.GetByUsername(HttpContext.Current.User.Identity.Name).Id;
+        private ItemInfosRepository ItemInfosRepository;
+        
         private const string RootNodeId = "-1";
 
         public EnhancedDictionaryEditorController()
         {
             TreeNodeRepository = new DictionnaryKeyTreeNodeRepository(this);
+            ItemInfosRepository = new ItemInfosRepository();
         }
         
         public ItemInfos GetDictionaryItemById(string id)
@@ -52,28 +50,13 @@ namespace EnhancedDictionaryEditor
             {
                 return null;
             }
-            var dictionaryItem = LocalizationService.GetDictionaryItemById(keyGuid);
-            
-            return new ItemInfos(dictionaryItem);
+
+            return ItemInfosRepository.GetDictionaryItemById(keyGuid);
         }
 
         public void DeleteById(string id)
         {
-            Guid keyGuid;
-            try
-            {
-                keyGuid = Guid.Parse(id);
-            }
-            catch (ArgumentNullException)
-            {
-                return;
-            }
-            var dictionaryItem = LocalizationService.GetDictionaryItemById(keyGuid);
-
-            if (dictionaryItem != null)
-            {
-                LocalizationService.Delete(dictionaryItem, CurrentUserId);
-            }
+            ItemInfosRepository.DeleteById(id);
         }
 
         [HttpPost]
@@ -125,33 +108,7 @@ namespace EnhancedDictionaryEditor
 
         public void Save(ItemInfos dictionaryItem)
         {
-            var item = dictionaryItem.IsNew ? null : LocalizationService.GetDictionaryItemById(dictionaryItem.Id.Value);
-            var isNew = false;
-
-            if (item == null)
-            {
-                isNew = true;
-                item = new DictionaryItem(dictionaryItem.ParentId, dictionaryItem.Key);
-
-                //to be assured that the new item will have the same id as the imported one.
-                if (dictionaryItem.Id != null && dictionaryItem.Id.HasValue)
-                {
-                    item.Key = dictionaryItem.Id.Value;
-                }
-            } else
-            {
-                item.ItemKey = dictionaryItem.Key;
-                if (dictionaryItem.ParentId != null) item.ParentId = dictionaryItem.ParentId;
-            }
-            
-            UpdateLanguages(item, dictionaryItem.Values);
-            LocalizationService.Save(item, CurrentUserId);
-
-            if (isNew)
-            {
-                //update saved item to have the newly created dictionary item Id.
-                dictionaryItem.Id = item.Key;
-            }
+            ItemInfosRepository.Save(dictionaryItem);
         }
 
         /// <summary>
@@ -161,8 +118,7 @@ namespace EnhancedDictionaryEditor
         /// <returns></returns>
         public ItemInfos[] GetAll()
         {
-            return LocalizationService.GetDictionaryItemDescendants(null)
-                .Select(x => new ItemInfos(x))
+            return ItemInfosRepository.GetDictionaryItemDescendants()
                 .OrderBy(x => x.Key)
                 .ToArray();
         }
@@ -174,7 +130,10 @@ namespace EnhancedDictionaryEditor
         /// <returns></returns>
         public ItemCulture[] GetCultures()
         {
-            return LocalizationService.GetAllLanguages().Select(x => new ItemCulture(x)).ToArray();
+            return UmbracoContext.Current.Application.Services.LocalizationService
+                .GetAllLanguages()
+                .Select(x => new ItemCulture(x))
+                .ToArray();
         }
 
         protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
@@ -204,23 +163,10 @@ namespace EnhancedDictionaryEditor
             return menuItems;
         }
 
-        private void UpdateLanguages(IDictionaryItem item, IDictionary<string, string> values)
-        {
-            var languages = LocalizationService.GetAllLanguages().ToArray();
-
-            foreach (var value in values)
-            {
-                var language = languages.FirstOrDefault(x => x.CultureInfo.Name == value.Key);
-                if (language == null) continue;
-
-                LocalizationService.AddOrUpdateDictionaryValue(item, language, value.Value);
-            }
-        }
-
         private void ImportItemWithChildren(ItemInfos importedDictionaryItem, List<ItemInfos> itemsToImport)
         {
             var childrens = itemsToImport.Where(x => x.ParentId == importedDictionaryItem.Id).ToList();
-            Save(importedDictionaryItem);
+            ItemInfosRepository.Save(importedDictionaryItem);
 
             foreach (var child in childrens)
             {
