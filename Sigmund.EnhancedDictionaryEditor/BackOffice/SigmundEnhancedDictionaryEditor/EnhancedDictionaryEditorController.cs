@@ -92,7 +92,7 @@ namespace EnhancedDictionaryEditor
             
             foreach (var dictionaryItem in rootItems)
             {
-                ImportItemWithChilds(dictionaryItem, allItems);
+                ImportItemWithChildren(dictionaryItem, allItems);
             }
 
             return new HttpResponseMessage(HttpStatusCode.OK);
@@ -217,7 +217,7 @@ namespace EnhancedDictionaryEditor
             }
         }
 
-        private void ImportItemWithChilds(ItemInfos importedDictionaryItem, List<ItemInfos> itemsToImport)
+        private void ImportItemWithChildren(ItemInfos importedDictionaryItem, List<ItemInfos> itemsToImport)
         {
             var childrens = itemsToImport.Where(x => x.ParentId == importedDictionaryItem.Id).ToList();
             Save(importedDictionaryItem);
@@ -229,7 +229,7 @@ namespace EnhancedDictionaryEditor
 
             foreach (var child in childrens)
             {
-                ImportItemWithChilds(child, itemsToImport);
+                ImportItemWithChildren(child, itemsToImport);
             }
         }
     }

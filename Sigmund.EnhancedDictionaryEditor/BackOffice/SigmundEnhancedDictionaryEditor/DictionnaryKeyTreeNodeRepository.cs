@@ -46,8 +46,8 @@ namespace Sigmund.EnhancedDictionaryEditor.BackOffice.SigmundEnhancedDictionaryE
 
         private TreeNode CreateTreeNode(IDictionaryItem item, string parentId)
         {
-            var hasChilds = LocalizationService.GetDictionaryItemChildren(item.Key).Any();
-            var node = TreeController.CreateTreeNode(item.Key.ToString(), parentId, EmptyFormData, item.ItemKey, "icon-book-alt", hasChilds);
+            var hasChildren = LocalizationService.GetDictionaryItemChildren(item.Key).Any();
+            var node = TreeController.CreateTreeNode(item.Key.ToString(), parentId, EmptyFormData, item.ItemKey, "icon-book-alt", hasChildren);
             node.AdditionalData["key"] = item.ItemKey;
 
             return node;
