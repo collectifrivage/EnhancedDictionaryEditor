@@ -3,11 +3,12 @@
 [![Build status](https://sigmundftw.visualstudio.com/Sigmund%20Nuget%20Packages/_apis/build/status/Sigmund%20Nuget%20Packages-ASP.NET-CI)](https://sigmundftw.visualstudio.com/Sigmund%20Nuget%20Packages/_build/latest?definitionId=74)
 
 Permet de 
-- Voir la liste des clés
-- Créer des clés
-- Modifier des clés
-- Supprimer des clés
-- Rechercher par identifiant ou par valeur des clés
+- Voir la liste des clés                    (1.0.0)
+- Créer des clés                            (1.0.0)
+- Modifier des clés                         (1.0.0)
+- Supprimer des clés                        (1.0.0)
+- Rechercher par identifiant ou par valeur  (1.0.0)
+- Importer et exporter la liste des clés    (1.1.0)
 
 ## Installation développeur
 
