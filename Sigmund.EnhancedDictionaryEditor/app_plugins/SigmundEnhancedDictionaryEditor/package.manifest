@@ -3,6 +3,8 @@
     "~/App_Plugins/SigmundEnhancedDictionaryEditor/apiService.js",
     "~/App_plugins/SigmundEnhancedDictionaryEditor/backoffice/EnhancedDictionaryEditorSectionTree/enhancedDictionaryEditorEditController.js",
     "~/App_plugins/SigmundEnhancedDictionaryEditor/backoffice/EnhancedDictionaryEditorSectionTree/enhancedDictionaryEditorDeleteController.js",
+    "~/App_plugins/SigmundEnhancedDictionaryEditor/backoffice/EnhancedDictionaryEditorSectionTree/enhancedDictionaryEditorExportController.js",
+    "~/App_plugins/SigmundEnhancedDictionaryEditor/backoffice/EnhancedDictionaryEditorSectionTree/enhancedDictionaryEditorImportController.js",
     "~/App_plugins/SigmundEnhancedDictionaryEditor/generalViewTabController.js"
   ]
 }

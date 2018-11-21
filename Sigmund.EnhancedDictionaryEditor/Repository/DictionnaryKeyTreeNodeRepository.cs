@@ -8,7 +8,7 @@ using Umbraco.Web;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Trees;
 
-namespace Sigmund.EnhancedDictionaryEditor.BackOffice.SigmundEnhancedDictionaryEditor
+namespace Sigmund.EnhancedDictionaryEditor.Repository
 {
     public class DictionnaryKeyTreeNodeRepository
     {
@@ -43,11 +43,11 @@ namespace Sigmund.EnhancedDictionaryEditor.BackOffice.SigmundEnhancedDictionaryE
 
             return nodes;
         }
-
+        
         private TreeNode CreateTreeNode(IDictionaryItem item, string parentId)
         {
-            var hasChilds = LocalizationService.GetDictionaryItemChildren(item.Key).Any();
-            var node = TreeController.CreateTreeNode(item.Key.ToString(), parentId, EmptyFormData, item.ItemKey, "icon-book-alt", hasChilds);
+            var hasChildren = LocalizationService.GetDictionaryItemChildren(item.Key).Any();
+            var node = TreeController.CreateTreeNode(item.Key.ToString(), parentId, EmptyFormData, item.ItemKey, "icon-book-alt", hasChildren);
             node.AdditionalData["key"] = item.ItemKey;
 
             return node;

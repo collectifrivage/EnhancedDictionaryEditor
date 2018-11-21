@@ -4,7 +4,7 @@
         var apiUrl = "/umbraco/backoffice/SigmundEnhancedDictionaryEditor/EnhancedDictionaryEditor/";
 
         return {
-            deleteItem: function(id) {
+            deleteItem: function (id) {
                 return $http.delete(apiUrl + "DeleteById?id=" + id);
             },
             getChildren: function (item) {
@@ -29,6 +29,20 @@
             },
             save: function (saveData) {
                 return $http.post(apiUrl + "Save/", saveData);
+            },
+            getDictionaryKeysXml: function () {
+                return $http.get(apiUrl + "ExportXml/");
+            },
+            uploadDictionaryKeysXml: function (xml) {
+                var req = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': "text/plain"
+                    },
+                    dataType: 'xml'
+                };
+
+                return $http.post(apiUrl + "ImportXml/", xml, req);
             }
-        }
+        };
     });

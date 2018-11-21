@@ -3,11 +3,12 @@
 [![Build status](https://sigmundftw.visualstudio.com/EnhancedDictionaryEditor/_apis/build/status/EnhancedDictionaryEditor%20Build%20pipeline)](https://sigmundftw.visualstudio.com/EnhancedDictionaryEditor/_build/latest?definitionId=78)
 
 Permet de 
-- Voir la liste des clés
-- Créer des clés
-- Modifier des clés
-- Supprimer des clés
-- Rechercher par identifiant ou par valeur des clés
+- Voir la liste des clés                    (1.0.0)
+- Créer des clés                            (1.0.0)
+- Modifier des clés                         (1.0.0)
+- Supprimer des clés                        (1.0.0)
+- Rechercher par identifiant ou par valeur  (1.0.0)
+- Importer et exporter la liste des clés    (1.1.0)
 
 ## Pour installer dans votre projet Umbraco
 

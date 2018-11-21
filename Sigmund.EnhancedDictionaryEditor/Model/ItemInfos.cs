@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EnhancedDictionaryEditor.Model.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Core.Models;
@@ -24,6 +25,14 @@ namespace EnhancedDictionaryEditor.Model
             Id = item.Key;
             Key = item.ItemKey;
             Values = item.Translations.ToDictionary(x => x.Language.CultureInfo.Name, x => x.Value);
+            ParentId = item.ParentId;
+        }
+
+        public ItemInfos(SerializableDictionaryItem item)
+        {
+            Id = item.Id;
+            Key = item.Key;
+            Values = item.Translations.ToDictionary(x => x.Language, x => x.Text);
             ParentId = item.ParentId;
         }
     }

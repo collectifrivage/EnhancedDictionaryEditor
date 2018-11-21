@@ -1,13 +1,22 @@
 ﻿using EnhancedDictionaryEditor.Model;
-using Sigmund.EnhancedDictionaryEditor.BackOffice.SigmundEnhancedDictionaryEditor;
+using EnhancedDictionaryEditor.Model.Serialization;
 using Sigmund.EnhancedDictionaryEditor.Model;
+using Sigmund.EnhancedDictionaryEditor.Model.MenuAction;
+using Sigmund.EnhancedDictionaryEditor.Model.Serialization;
+using Sigmund.EnhancedDictionaryEditor.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Xml;
+using System.Xml.Serialization;
 using umbraco.BusinessLogic.Actions;
-using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Web;
 using Umbraco.Web.Models.Trees;
@@ -21,13 +30,14 @@ namespace EnhancedDictionaryEditor
     public class EnhancedDictionaryEditorController : TreeController
     {
         private DictionnaryKeyTreeNodeRepository TreeNodeRepository;
-        private ILocalizationService LocalizationService => UmbracoContext.Current.Application.Services.LocalizationService;
-        private IUserService UserService => UmbracoContext.Current.Application.Services.UserService;
-        private int CurrentUserId => UserService.GetByUsername(HttpContext.Current.User.Identity.Name).Id;
+        private ItemInfosRepository ItemInfosRepository;
+        
+        private const string RootNodeId = "-1";
 
         public EnhancedDictionaryEditorController()
         {
             TreeNodeRepository = new DictionnaryKeyTreeNodeRepository(this);
+            ItemInfosRepository = new ItemInfosRepository();
         }
         
         public ItemInfos GetDictionaryItemById(string id)
@@ -40,45 +50,77 @@ namespace EnhancedDictionaryEditor
             {
                 return null;
             }
-            var dictionaryItem = LocalizationService.GetDictionaryItemById(keyGuid);
-            
-            return new ItemInfos(dictionaryItem);
+
+            return ItemInfosRepository.GetDictionaryItemById(keyGuid);
         }
 
         public void DeleteById(string id)
         {
-            Guid keyGuid;
-            try
-            {
-                keyGuid = Guid.Parse(id);
-            }
-            catch (ArgumentNullException)
-            {
-                return;
-            }
-            var dictionaryItem = LocalizationService.GetDictionaryItemById(keyGuid);
+            ItemInfosRepository.DeleteById(id);
+        }
 
-            if (dictionaryItem != null)
+        [HttpPost]
+        public async Task<HttpResponseMessage> ImportXml()
+        {
+            SerializableDictionaryItemsArray deserializedXml;
+            string xml = await Request.Content.ReadAsStringAsync();
+
+            XmlSerializer serializer = new XmlSerializer(typeof(SerializableDictionaryItemsArray));
+            
+            using (var stream = new StringReader(xml))
             {
-                LocalizationService.Delete(dictionaryItem, CurrentUserId);
+                try
+                {
+                    deserializedXml = serializer.Deserialize(stream) as SerializableDictionaryItemsArray;
+                }
+                catch (InvalidOperationException e)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                    {
+                        ReasonPhrase = e.Message
+                    };
+                }
+            }
+            
+            var allItems = deserializedXml.DictionaryItems.Select(x => new ItemInfos(x)).ToList();
+            var rootItems = allItems.Where(x => x.ParentId == null || !x.ParentId.HasValue).ToList();
+            
+            foreach (var dictionaryItem in rootItems)
+            {
+                ImportItemWithChildren(dictionaryItem, allItems);
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+        
+        [HttpGet]
+        public HttpResponseMessage ExportXml()
+        {
+            var dictionaryKeys = new SerializableDictionaryItemsArray() {
+                DictionaryItems = GetAll().Select(x => new SerializableDictionaryItem(x)).ToArray()
+            };
+
+            XmlSerializer serializer = new XmlSerializer(dictionaryKeys.GetType());
+            var xmlSettings = new XmlWriterSettings()
+            {
+                Encoding = new UTF8Encoding(false),
+                Indent = true,
+                NewLineOnAttributes = false,
+            };
+
+            using (var ms = new MemoryStream())
+            using (var xw = XmlWriter.Create(ms, xmlSettings))
+            {
+                serializer.Serialize(xw, dictionaryKeys);
+                var encodedXml = Encoding.UTF8.GetString(ms.ToArray());
+
+                return new HttpResponseMessage() { Content = new StringContent(encodedXml, Encoding.UTF8, "application/xml") };
             }
         }
 
         public void Save(ItemInfos dictionaryItem)
         {
-            IDictionaryItem item;
-            if (dictionaryItem.IsNew)
-            {
-                item = new DictionaryItem(dictionaryItem.ParentId, dictionaryItem.Key);
-            } else
-            {
-                item = LocalizationService.GetDictionaryItemById(dictionaryItem.Id.Value);
-                item.ItemKey = dictionaryItem.Key;
-                if (dictionaryItem.ParentId != null) item.ParentId = dictionaryItem.ParentId;
-            }
-            
-            UpdateLanguages(item, dictionaryItem.Values);
-            LocalizationService.Save(item, CurrentUserId);
+            ItemInfosRepository.Save(dictionaryItem);
         }
 
         /// <summary>
@@ -88,8 +130,7 @@ namespace EnhancedDictionaryEditor
         /// <returns></returns>
         public ItemInfos[] GetAll()
         {
-            return LocalizationService.GetDictionaryItemDescendants(null)
-                .Select(x => new ItemInfos(x))
+            return ItemInfosRepository.GetDictionaryItemDescendants()
                 .OrderBy(x => x.Key)
                 .ToArray();
         }
@@ -101,7 +142,10 @@ namespace EnhancedDictionaryEditor
         /// <returns></returns>
         public ItemCulture[] GetCultures()
         {
-            return LocalizationService.GetAllLanguages().Select(x => new ItemCulture(x)).ToArray();
+            return UmbracoContext.Current.Application.Services.LocalizationService
+                .GetAllLanguages()
+                .Select(x => new ItemCulture(x))
+                .ToArray();
         }
 
         protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
@@ -113,21 +157,37 @@ namespace EnhancedDictionaryEditor
         {
             var menuItems = new MenuItemCollection();
             menuItems.Items.Add(new CreateDictionaryItem(id));
-            if (id != "-1") menuItems.Items.Add<ActionDelete>("Delete");
+            if (id == RootNodeId)
+            {
+                var importMenuItem = new ImportDictionaryItems
+                {
+                    SeperatorBefore = true
+                };
+
+                menuItems.Items.Add(importMenuItem);
+                menuItems.Items.Add(new ExportDictionaryItems());
+            }
+            else
+            {
+                menuItems.Items.Add<ActionDelete>("Delete");
+            }
 
             return menuItems;
         }
 
-        private void UpdateLanguages(IDictionaryItem item, IDictionary<string, string> values)
+        private void ImportItemWithChildren(ItemInfos importedDictionaryItem, List<ItemInfos> itemsToImport)
         {
-            var languages = LocalizationService.GetAllLanguages().ToArray();
+            var childrens = itemsToImport.Where(x => x.ParentId == importedDictionaryItem.Id).ToList();
+            ItemInfosRepository.Save(importedDictionaryItem);
 
-            foreach (var value in values)
+            foreach (var child in childrens)
             {
-                var language = languages.FirstOrDefault(x => x.CultureInfo.Name == value.Key);
-                if (language == null) continue;
+                child.ParentId = importedDictionaryItem.Id;
+            }
 
-                LocalizationService.AddOrUpdateDictionaryValue(item, language, value.Value);
+            foreach (var child in childrens)
+            {
+                ImportItemWithChildren(child, itemsToImport);
             }
         }
     }
