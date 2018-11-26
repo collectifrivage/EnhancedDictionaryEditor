@@ -118,9 +118,11 @@ namespace EnhancedDictionaryEditor
             }
         }
 
-        public void Save(ItemInfos dictionaryItem)
+        public ItemInfos Save(ItemInfos dictionaryItem)
         {
             ItemInfosRepository.Save(dictionaryItem);
+
+            return dictionaryItem;
         }
 
         /// <summary>
