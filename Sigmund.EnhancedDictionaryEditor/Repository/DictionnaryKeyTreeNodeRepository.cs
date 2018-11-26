@@ -24,6 +24,7 @@ namespace Sigmund.EnhancedDictionaryEditor.Repository
 
         public TreeNodeCollection GetById(string id)
         {
+            var result = new TreeNodeCollection();
             IEnumerable<IDictionaryItem> keys;
 
             if (id == RootTreeNodeId)
@@ -34,14 +35,13 @@ namespace Sigmund.EnhancedDictionaryEditor.Repository
                 keys = LocalizationService.GetDictionaryItemChildren(Guid.Parse(id));
             }
 
-            var nodes = new TreeNodeCollection();
+            var nodes = keys
+                .OrderBy(x => x.ItemKey)
+                .Select(x => CreateTreeNode(x, id));
 
-            foreach (var dictionnaryKey in keys)
-            {
-                nodes.Add(CreateTreeNode(dictionnaryKey, id));
-            }
+            result.AddRange(nodes);
 
-            return nodes;
+            return result;
         }
         
         private TreeNode CreateTreeNode(IDictionaryItem item, string parentId)
