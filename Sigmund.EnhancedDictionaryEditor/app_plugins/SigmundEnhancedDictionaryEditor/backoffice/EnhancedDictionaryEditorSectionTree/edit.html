@@ -6,13 +6,13 @@
     <ng-form name="dictionaryItemForm" val-form-manager>
         <umb-panel ng-if="!loading">
             <umb-editor-view>
-                <umb-editor-header ng-if="isNew"
+                <umb-editor-header ng-if="isNew()"
                                    hide-icon="true"
                                    hide-description="true"
                                    name="dictionaryItem.Key"
                                    hide-alias="true">
                 </umb-editor-header>
-                <umb-editor-header ng-if="!isNew"
+                <umb-editor-header ng-if="!isNew()"
                                    hide-icon="true"
                                    hide-description="true"
                                    alias="dictionaryItem.Key"

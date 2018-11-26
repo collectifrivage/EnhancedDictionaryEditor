@@ -9,14 +9,14 @@
             $scope.loading = true;
 
             sigmundDictionaryEditorApiService.save($scope.dictionaryItem)
-                .then(function () {
+                .then(function (result) {
                     $scope.dictionaryItemForm.$setPristine();
                     if ($scope.dictionaryItem.Key !== defaultDictionaryItemKey) {
                         updateTreeNodeWithId($scope.dictionaryItem.Id);
                         defaultDictionaryItemKey = $scope.dictionaryItem.Key;
                     }
+                    $scope.dictionaryItem.Id = result.data.Id;
                     $scope.loading = false;
-                    $scope.isNew = false;
                 },
                 function (err) {
                     contentEditingHelper.handleSaveError({
@@ -27,7 +27,11 @@
                     notificationsService.error(err.data.message);
                     $scope.loading = false;
                 });
-        }
+        };
+
+        $scope.isNew = function () {
+            return $routeParams.id ? false : !$scope.dictionaryItem.Id;
+        };
 
         function updateTreeNodeWithId(id) {
             navigationService.syncTree({ tree: 'EnhancedDictionaryEditorSectionTree', path: [id], forceReload: true, activate: false });
@@ -37,8 +41,7 @@
             $scope.loading = true;
             $scope.dictionaryItem = undefined;
             $scope.cultures = [];
-            $scope.isNew = false;
-
+            
             $q.all([
                 sigmundDictionaryEditorApiService.getDictionaryItemById($routeParams.id), 
                 sigmundDictionaryEditorApiService.getCultures()
@@ -46,7 +49,6 @@
                 var dictionaryItem = result[0].data;
                 if (dictionaryItem == null) {
                     dictionaryItem = getNewDictionaryItem();
-                    $scope.isNew = true;
                 }
                 var cultures = result[1].data
                 $scope.dictionaryItem = dictionaryItem;
