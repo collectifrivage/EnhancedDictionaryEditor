@@ -1,4 +1,4 @@
-# Éditeur de clé de dictionaire rehaussé Sigmund
+# Éditeur de clé de dictionnaire rehaussé Sigmund
 
 [![Build status](https://sigmundftw.visualstudio.com/EnhancedDictionaryEditor/_apis/build/status/EnhancedDictionaryEditor%20Build%20pipeline)](https://sigmundftw.visualstudio.com/EnhancedDictionaryEditor/_build/latest?definitionId=78)
 
