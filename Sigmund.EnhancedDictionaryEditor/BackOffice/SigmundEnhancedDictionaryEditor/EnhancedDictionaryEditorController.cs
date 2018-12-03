@@ -4,6 +4,7 @@ using Sigmund.EnhancedDictionaryEditor.Model;
 using Sigmund.EnhancedDictionaryEditor.Model.MenuAction;
 using Sigmund.EnhancedDictionaryEditor.Model.Serialization;
 using Sigmund.EnhancedDictionaryEditor.Repository;
+using Sigmund.EnhancedDictionaryEditor.Translation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -123,6 +124,30 @@ namespace EnhancedDictionaryEditor
             ItemInfosRepository.Save(dictionaryItem);
 
             return dictionaryItem;
+        }
+
+        /// <summary>
+        /// GET: /umbraco/backoffice/SigmundEnhancedDictionaryEditor/Translate/
+        /// Return: Translated text.
+        [HttpGet]
+        public HttpResponseMessage Translate(string text, string translate_from, string translate_to)
+        {
+            var translator = DictionaryKeyTranslatorProvider.GetTranslator();
+            var translatedText = translator.Translate(text, translate_from, translate_to);
+
+            return new HttpResponseMessage() {
+                Content = new StringContent(translatedText)
+            };
+        }
+
+        /// <summary>
+        /// GET: /umbraco/backoffice/SigmundEnhancedDictionaryEditor/TranslationAvailable/
+        /// Return: true if the auto translation feature is enabled.
+        [HttpGet]
+        public bool TranslationAvailable()
+        {
+            DictionaryKeyTranslatorProvider.SetTranslator(new TestTranslator());
+            return DictionaryKeyTranslatorProvider.GetTranslator() != null;
         }
 
         /// <summary>

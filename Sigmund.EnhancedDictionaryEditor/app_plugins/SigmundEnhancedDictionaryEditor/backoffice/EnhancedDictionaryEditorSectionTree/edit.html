@@ -23,6 +23,14 @@
                     <div class="tab-content form-horizontal" style="padding-bottom: 90px">
                         <umb-control-group ng-repeat="culture in cultures" label="{{culture.DisplayName}}" description="{{culture.Name}}">
                             <textarea class="umb-editor textstring" ng-model="dictionaryItem.Values[culture.Name]"></textarea>
+                            <umb-button ng-if="shouldDisplayTranslateButton(culture)"
+                                        action="translate(culture)"
+                                        type="button"
+                                        button-style="primary"
+                                        label="get translated"
+                                        icon="icon-umb-translation"
+                                        disabled="dictionaryItem.Values[culture.Name]">
+                            </umb-button>
                         </umb-control-group>
                     </div>
                 </umb-editor-container>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigmund.EnhancedDictionaryEditor.Translation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;

@@ -280,6 +280,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\DictionnaryKeyTreeNodeRepository.cs" />
     <Compile Include="Repository\ItemInfosRepository.cs" />
+    <Compile Include="Translation\DictionaryKeyTranslatorProvider.cs" />
+    <Compile Include="Translation\ITranslator.cs" />
+    <Compile Include="Translation\TestTranslator.cs" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
