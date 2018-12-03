@@ -18,7 +18,6 @@ using System.Web.Http;
 using System.Xml;
 using System.Xml.Serialization;
 using umbraco.BusinessLogic.Actions;
-using Umbraco.Core.Services;
 using Umbraco.Web;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
@@ -146,7 +145,6 @@ namespace EnhancedDictionaryEditor
         [HttpGet]
         public bool TranslationAvailable()
         {
-            DictionaryKeyTranslatorProvider.SetTranslator(new TestTranslator());
             return DictionaryKeyTranslatorProvider.GetTranslator() != null;
         }
 
