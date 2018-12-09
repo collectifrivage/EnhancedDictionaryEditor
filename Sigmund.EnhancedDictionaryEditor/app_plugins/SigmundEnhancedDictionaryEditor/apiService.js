@@ -43,6 +43,16 @@
                 };
 
                 return $http.post(apiUrl + "ImportXml/", xml, req);
-            }
+            },
+            translate: function (text, languageFrom, languageTo) {
+                var encodedText = encodeURI(text);
+                var encodedLanguageFrom = encodeURI(languageFrom);
+                var encodedLanguageTo = encodeURI(languageTo);
+
+                return $http.get(apiUrl + "Translate?text=" + encodedText + "&translate_from=" + encodedLanguageFrom + "&translate_to=" + encodedLanguageTo);
+            },
+            isTranslationAvailable: function () {
+                return $http.get(apiUrl + "TranslationAvailable");
+            },
         };
     });

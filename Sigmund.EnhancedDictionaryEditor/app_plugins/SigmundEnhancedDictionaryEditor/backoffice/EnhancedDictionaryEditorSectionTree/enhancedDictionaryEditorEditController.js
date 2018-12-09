@@ -31,7 +31,36 @@
 
         $scope.isNew = function () {
             return $routeParams.id ? false : !$scope.dictionaryItem.Id;
-        };
+        }
+
+        $scope.translate = function (culture) {
+            var firstNotEmptyText = "";
+            var firstNotEmptyCulture = "";
+            for (var key in $scope.dictionaryItem.Values) {
+                var value = $scope.dictionaryItem.Values[key];
+                
+                if (value) {
+                    firstNotEmptyText = value;
+                    firstNotEmptyCulture = key;
+                    break;
+                }
+            }
+            sigmundDictionaryEditorApiService.translate(firstNotEmptyText, firstNotEmptyCulture, culture.Name)
+                .then(function (result) {
+                    $scope.dictionaryItem.Values[culture.Name] = result.data;
+                });
+        }
+
+        $scope.shouldDisplayTranslateButton = function (buttonCulture) {
+            if (!$scope.isTranslationAvailable || $scope.dictionaryItem.Values[buttonCulture.Name]) return false;
+
+            var shouldDisplay = false;
+            $scope.cultures.forEach(function (culture) {
+                if ($scope.dictionaryItem.Values[culture.Name]) shouldDisplay = true;
+            });
+
+            return shouldDisplay;
+        }
 
         function updateTreeNodeWithId(id) {
             navigationService.syncTree({ tree: 'EnhancedDictionaryEditorSectionTree', path: [id], forceReload: true, activate: false });
@@ -44,17 +73,14 @@
             
             $q.all([
                 sigmundDictionaryEditorApiService.getDictionaryItemById($routeParams.id), 
-                sigmundDictionaryEditorApiService.getCultures()
+                sigmundDictionaryEditorApiService.getCultures(),
+                sigmundDictionaryEditorApiService.isTranslationAvailable()
             ]).then(function (result) {
-                var dictionaryItem = result[0].data;
-                if (dictionaryItem == null) {
-                    dictionaryItem = getNewDictionaryItem();
-                }
-                var cultures = result[1].data
-                $scope.dictionaryItem = dictionaryItem;
-                $scope.cultures = cultures;
+                $scope.dictionaryItem = result[0].data ? result[0].data : getNewDictionaryItem();
+                $scope.cultures = result[1].data
+                $scope.isTranslationAvailable = result[2].data == "true";
 
-                defaultDictionaryItemKey = dictionaryItem;
+                defaultDictionaryItemKey = $scope.dictionaryItem;
                 $scope.loading = false;
             },
             function (err) {
