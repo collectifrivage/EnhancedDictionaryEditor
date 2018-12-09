@@ -14,7 +14,7 @@ Permet de
 ## Bouton de traduction automatique 
 
 La traduction automatique vous permet d'implémenter une classe qui sera utilisée pour traduire les textes des clés.
-Pour ce faire, définissez une classe implémentant l'interface "Translator" et configurez l'application au démarrage pour en faire utilisation.
+Pour ce faire, définissez une classe implémentant l'interface "ITranslator" et configurez l'application au démarrage pour en faire utilisation.
 
 ```
 DictionaryKeyTranslatorProvider.SetTranslator(new Translator());

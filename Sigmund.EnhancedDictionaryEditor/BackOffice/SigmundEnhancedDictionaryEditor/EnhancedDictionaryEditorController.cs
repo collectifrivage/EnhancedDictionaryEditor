@@ -131,7 +131,10 @@ namespace EnhancedDictionaryEditor
         [HttpGet]
         public HttpResponseMessage Translate(string text, string translate_from, string translate_to)
         {
-            var translator = DictionaryKeyTranslatorProvider.GetTranslator();
+            if (!TranslationAvailable()) 
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
+            var translator = DictionaryValueTranslatorProvider.GetTranslator();
             var translatedText = translator.Translate(text, translate_from, translate_to);
 
             return new HttpResponseMessage() {
@@ -145,7 +148,7 @@ namespace EnhancedDictionaryEditor
         [HttpGet]
         public bool TranslationAvailable()
         {
-            return DictionaryKeyTranslatorProvider.GetTranslator() != null;
+            return DictionaryValueTranslatorProvider.GetTranslator() != null;
         }
 
         /// <summary>

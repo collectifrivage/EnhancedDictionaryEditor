@@ -2,7 +2,7 @@
 
 namespace Sigmund.EnhancedDictionaryEditor.Translation
 {
-    public static class DictionaryKeyTranslatorProvider
+    public static class DictionaryValueTranslatorProvider
     {
         private static ITranslator _translator;
 
@@ -14,14 +14,6 @@ namespace Sigmund.EnhancedDictionaryEditor.Translation
         public static void SetTranslator(ITranslator translator)
         {
             _translator = translator ?? throw new ArgumentNullException("translator");
-        }
-    }
-
-    public class Test : ITranslator
-    {
-        public string Translate(string text, string languageTranslateFrom, string languageTranslateTo)
-        {
-            return "gfhfghgfhfgh";
         }
     }
 }
