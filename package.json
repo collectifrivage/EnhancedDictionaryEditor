@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "copy_watch": "cpx Sigmund.EnhancedDictionaryEditor/app_plugins/**/*.* Sigmund.EnhancedDictionaryEditor.Test.Website/App_Plugins/ --watch",
+    "copy": "cpx Sigmund.EnhancedDictionaryEditor/app_plugins/**/*.* Sigmund.EnhancedDictionaryEditor.Test.Website/App_Plugins/"
+  },
+  "dependencies": {
+    "cpx": "1.5.0"
+  },
+  "engines": {
+    "node": "8.11.2",
+    "npm": "7.0.0"
+  }
+}
